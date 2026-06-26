@@ -1,1 +1,25 @@
-if(!self.define){let e,i={};const n=(n,s)=>(n=new URL(n+".js",s).href,i[n]||new Promise(i=>{if("document"in self){const e=document.createElement("script");e.src=n,e.onload=i,document.head.appendChild(e)}else e=n,importScripts(n),i()}).then(()=>{let e=i[n];if(!e)throw new Error(`Module ${n} didn’t register its module`);return e}));self.define=(s,r)=>{const o=e||("document"in self?document.currentScript.src:"")||location.href;if(i[o])return;let t={};const f=e=>n(e,o),c={module:{uri:o},exports:t,require:f};i[o]=Promise.all(s.map(e=>c[e]||f(e))).then(e=>(r(...e),t))}}define(["./workbox-9c191d2f"],function(e){"use strict";self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"registerSW.js",revision:"9eefd5585a18689bf224f4328b4cc865"},{url:"index.html",revision:"35df48cbede171a4c7264db3a7b6d16e"},{url:"assets/index-PethZKDL.css",revision:null},{url:"assets/index--fF3C-Fy.js",revision:null},{url:"favicon.svg",revision:"e6b35f980369fe17bca255e6fa19b3d9"},{url:"icon-192.png",revision:"408fa6b6c280f3afbfddf5d586e7d09f"},{url:"icon-512.png",revision:"36f9a9e70b203a918275328b538b2364"},{url:"manifest.webmanifest",revision:"afc832fc6e7498c76cafa28e5177a4df"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))});
+
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
+});
+self.addEventListener('activate', (e) => {
+  self.registration.unregister()
+    .then(() => self.clients.matchAll())
+    .then((clients) => {
+      clients.forEach((client) => {
+        if (client instanceof WindowClient)
+          client.navigate(client.url);
+      });
+      return Promise.resolve();
+    })
+    .then(() => {
+      self.caches.keys().then((cacheNames) => {
+        Promise.all(
+          cacheNames.map((cacheName) => {
+            return self.caches.delete(cacheName);
+          }),
+        );
+      })
+    });
+});
+    
